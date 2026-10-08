@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Seven Months</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f2bd1d;--ink:#18120a;--bar:#000}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--ink);font-family:'Instrument Serif',Georgia,serif;transition:background 2s ease,color 2s ease}
+body.end{--bg:#0c0903;--ink:#f2bd1d}
+.bar{position:fixed;left:0;right:0;height:9vh;background:var(--bar);z-index:3}
+#t{top:0}#b{bottom:0}
+#grain{position:fixed;inset:0;width:100%;height:100%;opacity:.14;mix-blend-mode:multiply;pointer-events:none;z-index:2}
+body.end #grain{mix-blend-mode:screen;opacity:.08}
+main{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:12vh 9vw;text-align:center;transition:opacity 1s}
+main.gone{opacity:0;pointer-events:none}
+#p{margin:0;opacity:0;transform:translateY(8px);transition:opacity 1.3s ease,transform 1.3s ease;font-size:clamp(2rem,6.4vw,4.6rem);line-height:1.15;max-width:15em}
+#p.on{opacity:1;transform:none}
+i{font-style:italic}
+small{position:fixed;bottom:calc(4.5vh - .5em);left:0;right:0;text-align:center;color:#f2bd1d;opacity:.55;font-size:.95rem;letter-spacing:.05em;z-index:4;transition:opacity .6s}
+#snd{position:fixed;top:calc(4.5vh - .6em);right:5vw;z-index:5;background:none;border:0;padding:0;color:#f2bd1d;font:inherit;font-size:.95rem;opacity:0;transition:opacity 1s;cursor:pointer}
+#snd.show{opacity:.55}
+#letter{position:fixed;top:9vh;bottom:9vh;left:0;right:0;overflow-y:auto;padding:12vh 9vw;opacity:0;pointer-events:none;transition:opacity 1.5s;scrollbar-width:none;z-index:1;cursor:default;-webkit-mask-image:linear-gradient(transparent,#000 9%,#000 91%,transparent);mask-image:linear-gradient(transparent,#000 9%,#000 91%,transparent)}
+#letter::-webkit-scrollbar{display:none}
+#letter.on{opacity:1;pointer-events:auto}
+#letter div{max-width:30em;margin:0 auto}
+#letter p{font-size:clamp(1.3rem,3.4vw,1.75rem);line-height:1.5;margin:0 0 1.4em;opacity:0;transform:translateY(10px);transition:opacity 1.4s ease,transform 1.4s ease}
+#letter.on p{opacity:1;transform:none}
+#letter .sig{font-style:italic;font-size:clamp(1.6rem,4vw,2.2rem);margin-top:2em;padding-bottom:12vh}
+#fin{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12vh 9vw;text-align:center;opacity:0;pointer-events:none;transition:opacity 1.6s;z-index:2}
+#fin.on{opacity:1;pointer-events:auto}
+#fin h2{font-weight:400;font-size:clamp(2rem,6.4vw,4.2rem);line-height:1.15;margin:0 0 1.2em;max-width:14em;transition:opacity .9s}
+#fin .ch{display:flex;gap:2.2rem;flex-wrap:wrap;justify-content:center;transition:opacity .9s}
+#fin button{background:none;border:0;border-bottom:1px solid currentColor;color:inherit;font:inherit;font-style:italic;font-size:clamp(1.2rem,3vw,1.6rem);padding:0 0 .15em;cursor:pointer}
+</style></head>
+<body>
+<svg id="grain"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>
+<div class="bar" id="t"></div><div class="bar" id="b"></div>
+<button id="snd">sound on</button>
+<main id="m"><p id="p"></p></main>
+<section id="letter"><div id="lt"></div></section>
+<div id="fin"><h2 id="fq"></h2><div class="ch" id="fc"></div></div>
+<small id="s">tap</small>
+<script>
+/* ===== EDIT THESE ===== */
+const SCREENS=[
+ "Seven months.",
+ "This month got busy.<br>I just hope <i>we're</i> okay.",
+ "I think about how we were before.<br>I hope we're still <i>that</i>.",
+ "Thank you for the patience,<br>the laughs, and every time<br>you chose <i>us</i>.",
+ "Happy 7th, <i>Cara</i>."
+];
+/* Your long message. One string = one paragraph. As long as you want, it scrolls. */
+const LETTER=[
+ "Hi love.",
+ "I've been trying to figure out how to say this, so I'm just going to say it the way it feels.",
+ "On the surface, nothing changed. We still talk every day, we still do our usual things, we still say goodnight. From the outside it looks like a normal month, and most days it is.",
+ "But we've been fighting more, and even after we get through them and go back to normal, something stays. A small sadness that doesn't leave. A doubt I can't explain. It feels like something changed deep down, somewhere neither of us is looking.",
+ "I don't think it's one fight. I think it's all of them, piling up quietly while we keep acting like we're fine.",
+ "And I hate that I notice it. I hate lying awake asking myself if we're okay, when from the outside we are. I keep wondering if you feel it too, or if it's just me overthinking again.",
+ "I think about how we were before. It wasn't perfect, but it felt lighter. I didn't carry this. I want to know if that version of us is still here, or if we changed without ever deciding to.",
+ "I'm not saying this to start another fight. I'm saying it because I'd rather be honest than keep pretending the feeling isn't there.",
+ "If I've hurt you in any of them, I'm sorry. And if you've been carrying something too, I want to hear it, even if it's hard.",
+ "Seven months isn't long, but it's long enough that I know I want to fix this with you, not walk around it. I'm not asking for perfect. I'm asking that we stay okay, and that we find our way back to what we were, or something even better.",
+ "Thank you for staying through the hard parts. I'm still here. I hope you are too."
+];
+const SIGN="Yours, Your Name";
+/* Shown automatically when she reaches the end of the letter. */
+const END={q:"So... are we okay?",a:[
+ ["yes, we are","Okay. Then i'll hold on to that. happy 7th monthsary, my love."],
+ ["not yet, let's talk","then let's talk. whenever you're ready. i'll always stay and be there for you. forever"]
+]};
+/* ====================== */
+const $=id=>document.getElementById(id),p=$('p'),s=$('s'),L=$('letter'),snd=$('snd');
+let i=-1,lock=false,letterOn=false;
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* sound: soft synthesized pad + a gentle note on every tap */
+let ac,master,bus,muted=false;
+function startAudio(){
+ if(ac)return;
+ try{
+  ac=new(window.AudioContext||window.webkitAudioContext)();
+  master=ac.createGain();master.gain.value=0;master.connect(ac.destination);
+  master.gain.linearRampToValueAtTime(.9,ac.currentTime+5);
+  bus=ac.createGain();bus.gain.value=.8;bus.connect(master);
+  const dl=ac.createDelay();dl.delayTime.value=.45;const fb=ac.createGain();fb.gain.value=.4;
+  const wet=ac.createGain();wet.gain.value=.45;
+  bus.connect(dl);dl.connect(fb);fb.connect(dl);dl.connect(wet);wet.connect(master);
+  const lp=ac.createBiquadFilter();lp.type='lowpass';lp.frequency.value=650;lp.connect(bus);
+  const lfo=ac.createOscillator();lfo.frequency.value=.07;const lg=ac.createGain();lg.gain.value=280;
+  lfo.connect(lg);lg.connect(lp.frequency);lfo.start();
+  [146.83,220,277.18,369.99,554.37].forEach((f,k)=>{
+   const o=ac.createOscillator(),g=ac.createGain();
+   o.type=k%2?'sine':'triangle';o.frequency.value=f;o.detune.value=(k-2)*4;g.gain.value=.04;
+   o.connect(g);g.connect(lp);o.start();
+  });
+  snd.classList.add('show');
+ }catch(e){}
+}
+function note(){
+ if(!ac||muted)return;
+ const n=[587.33,659.25,739.99,880,987.77,1108.73],f=n[Math.floor(Math.random()*n.length)];
+ const o=ac.createOscillator(),g=ac.createGain(),t=ac.currentTime;
+ o.type='sine';o.frequency.value=f;
+ g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.14,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+3);
+ o.connect(g);g.connect(bus);o.start(t);o.stop(t+3.2);
+}
+snd.addEventListener('click',e=>{
+ e.stopPropagation();if(!ac)return;muted=!muted;
+ master.gain.cancelScheduledValues(ac.currentTime);
+ master.gain.linearRampToValueAtTime(muted?0:.9,ac.currentTime+.6);
+ snd.textContent=muted?'sound off':'sound on';
+});
+
+let ft=null,finDone=false;
+function check(){
+ if(finDone)return;
+ const end=L.scrollTop+L.clientHeight>=L.scrollHeight-30;
+ if(end){if(!ft)ft=setTimeout(finale,4000)}else{clearTimeout(ft);ft=null}
+}
+async function finale(){
+ if(finDone)return;finDone=true;
+ L.classList.remove('on');await wait(1700);
+ $('fq').textContent=END.q;
+ $('fc').innerHTML=END.a.map((a,k)=>`<button data-k="${k}">${a[0]}</button>`).join('');
+ $('fin').classList.add('on');
+}
+$('fc').addEventListener('click',async e=>{
+ const b=e.target.closest('button');if(!b)return;
+ e.stopPropagation();note();
+ $('fq').style.opacity=0;$('fc').style.opacity=0;await wait(900);
+ $('fq').textContent=END.a[b.dataset.k][1];$('fc').innerHTML='';$('fq').style.opacity=1;
+});
+L.addEventListener('scroll',check);
+async function showLetter(){
+ letterOn=true;lock=true;s.style.opacity=0;
+ $('m').classList.add('gone');
+ $('lt').innerHTML=LETTER.map((t,k)=>`<p style="transition-delay:${1+k*.5}s">${t}</p>`).join('')+`<p class="sig" style="transition-delay:${1+LETTER.length*.5}s">${SIGN}</p>`;
+ await wait(900);L.classList.add('on');setTimeout(check,2500);
+}
+async function next(){
+ if(lock||letterOn)return;
+ note();
+ if(i>=SCREENS.length-1){showLetter();return}
+ lock=true;i++;s.style.opacity=0;
+ p.classList.remove('on');await wait(i?900:0);
+ if(i===SCREENS.length-1)document.body.classList.add('end');
+ p.innerHTML=SCREENS[i];p.offsetWidth;p.classList.add('on');
+ await wait(700);lock=false;
+ s.textContent=i===SCREENS.length-1?'keep going':'tap';s.style.opacity=.55;
+}
+document.addEventListener('click',()=>{startAudio();next()});
+document.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'||e.key==='ArrowRight'){startAudio();next()}});
+next();
+</script>
+</body></html>
